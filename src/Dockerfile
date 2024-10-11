@@ -1,21 +1,19 @@
-FROM openjdk:17-jdk-slim AS build
+# Stage 1: Build java program
+FROM openjdk:11-jdk-slim
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
-# Copy the source file
 COPY Main.java .
 
-# Compile the Java program
+# Compile the program
 RUN javac Main.java
 
-# Stage 2: Runtime Stage (using JRE for running the app)
-FROM openjdk:17-jre-slim
+# Stage 2: Run app
+FROM openjdk:11-jre-slim
 
-# Set the working directory in the second stage
-WORKDIR /usr/src/app
+WORKDIR /app
 
-# Copy the compiled class from the builder stage
-COPY --from=builder /usr/src/app/Main.class .
+COPY --from=0 /app/Main.class .
 
-# Command to run the Java program
+# Run program
 CMD ["java", "Main"]
